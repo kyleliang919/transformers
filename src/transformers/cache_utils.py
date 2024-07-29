@@ -1275,7 +1275,6 @@ class CustomHybridCache(Cache):
                 "sliding window attention, please check if there is a `sliding_window` field in the model "
                 "config and it's not set to None."
             )
-        config.sliding_windows = [int(each) for each in config.sliding_windows.split(",")]
         self.max_cache_len = max_cache_len
         self.max_batch_size = max_batch_size
         # Some model define a custom `head_dim` != config.hidden_size // config.num_attention_heads
