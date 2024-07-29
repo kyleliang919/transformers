@@ -1391,7 +1391,10 @@ class CustomHybridCache(Cache):
         return self.max_cache_len
 
     def get_seq_length(self, layer_idx: Optional[int] = 0):
-        return None
+        if len(self.key_cache) <= layer_idx:
+            return 0
+        # This is assuming there is at least one single full attention within the layers, for full sliding window attention we need to do something else
+        return max([each.shape[-2] for each in self.key_cache])
 
     def reset(self):
         """Resets the cache values while preserving the objects"""
