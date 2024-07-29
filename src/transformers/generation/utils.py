@@ -32,6 +32,7 @@ from ..cache_utils import (
     EncoderDecoderCache,
     HQQQuantizedCache,
     HybridCache,
+    CustomHybridCache,
     MambaCache,
     QuantizedCacheConfig,
     QuantoQuantizedCache,
@@ -121,6 +122,7 @@ NEED_SETUP_CACHE_CLASSES_MAPPING = {
     "static": StaticCache,
     "sliding_window": SlidingWindowCache,
     "hybrid": HybridCache,
+    "custom_hybrid": CustomHybridCache,
     "mamba": MambaCache,
 }
 QUANT_BACKEND_CLASSES_MAPPING = {"quanto": QuantoQuantizedCache, "HQQ": HQQQuantizedCache}
