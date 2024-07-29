@@ -1268,7 +1268,7 @@ class HybridCache(Cache):
 
 class CustomHybridCache(Cache):
     def __init__(self, config: PretrainedConfig, max_batch_size, max_cache_len, device="cpu", dtype=None) -> None:
-        if not hasattr(config, "sliding_window") or config.sliding_window is None:
+        if not hasattr(config, "sliding_windows") or config.sliding_windows is None:
             raise ValueError(
                 "Setting `cache_implementation` to 'sliding_window' requires the model config supporting "
                 "sliding window attention, please check if there is a `sliding_window` field in the model "
