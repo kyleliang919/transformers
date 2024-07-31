@@ -1369,6 +1369,7 @@ class CustomHybridCache(Cache):
         layer_idx: int,
         cache_kwargs: Optional[Dict[str, Any]] = None,
     ) -> Tuple[torch.Tensor]:
+        self._finish_prefilling = True
         cache_position = cache_kwargs.get("cache_position")
         self.key_cache[layer_idx] = self.key_cache[layer_idx].to(device=key_states.device)
         self.value_cache[layer_idx] = self.value_cache[layer_idx].to(device=value_states.device)
@@ -1402,7 +1403,6 @@ class CustomHybridCache(Cache):
             return max([each.shape[-2] for each in self.key_cache])
         else:
             # This is a hack to handle generation util, the first time it calls get_seq_length it's on the empty cache, but since we already pre-allocate the tensors, it will output wrong cache_positions
-            self._finish_prefilling = True
             return 0
 
     def reset(self):
