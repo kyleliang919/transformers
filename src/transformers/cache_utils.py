@@ -1324,7 +1324,8 @@ class CustomHybridCache(Cache):
             torch._dynamo.mark_static_address(new_layer_value_cache)
             self.key_cache.append(new_layer_key_cache)
             self.value_cache.append(new_layer_value_cache)
-
+        self._finish_prefilling = False
+        
     def _sliding_update(self, cache_position, layer_idx, key_states, value_states, k_out, v_out, max_cache_len):
         if cache_position.shape[0] > max_cache_len:
             k_out = key_states[:, :, -max_cache_len:, :]
@@ -1397,7 +1398,12 @@ class CustomHybridCache(Cache):
         if len(self.key_cache) <= layer_idx:
             return 0
         # This is assuming there is at least one single full attention within the layers, for full sliding window attention we need to do something else
-        return max([each.shape[-2] for each in self.key_cache])
+        if self._finish_prefilling:
+            return max([each.shape[-2] for each in self.key_cache])
+        else:
+            # This is a hack to handle generation util, the first time it calls get_seq_length it's on the empty cache, but since we already pre-allocate the tensors, it will output wrong cache_positions
+            self._finish_prefilling = True
+            return 0
 
     def reset(self):
         """Resets the cache values while preserving the objects"""
