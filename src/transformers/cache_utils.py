@@ -1301,7 +1301,7 @@ class CustomHybridCache(Cache):
             config.num_attention_heads if config.num_key_value_heads is None else config.num_key_value_heads
         )
         self.is_sliding = torch.tensor(
-            [not bool(s > 0) for s in config.sliding_windows], dtype=torch.bool, device=device
+            [bool(s > 0) for s in config.sliding_windows], dtype=torch.bool, device=device
         )
         self.key_cache: List[torch.Tensor] = []
         self.value_cache: List[torch.Tensor] = []
@@ -1310,10 +1310,11 @@ class CustomHybridCache(Cache):
         for i in range(config.num_hidden_layers):
             # Note: `mark_static_address` is used to tag the cache as an fixed data pointer, preventing cuda graph
             # breaks when updating the cache.
+            sliding_window = config.sliding_windows[i]
             sliding_cache_shape = (
                 max_batch_size,
                 self.num_key_value_heads,
-                min(config.sliding_windows[i], max_cache_len),
+                min(sliding_window, max_cache_len) if sliding_window > 0 else max_cache_len,
                 self.head_dim,
             )
             cache_shape = global_cache_shape if not self.is_sliding[i] else sliding_cache_shape
