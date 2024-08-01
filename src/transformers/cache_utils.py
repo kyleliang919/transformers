@@ -1406,6 +1406,7 @@ class CustomHybridCache(Cache):
             return 0
 
     def reset(self):
+        self._finish_prefilling = False
         """Resets the cache values while preserving the objects"""
         for layer_idx in range(len(self.key_cache)):
             # In-place ops prevent breaking the static address
